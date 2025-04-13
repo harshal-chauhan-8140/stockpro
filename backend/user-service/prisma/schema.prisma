@@ -1,0 +1,124 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum SIDE_TYPE {
+  SELL
+  BUY
+}
+
+enum EXECUTION_TYPE {
+  MARKET
+  LIMIT
+}
+
+enum ORDER_STATUS {
+  FILLED
+  PENDING
+  PARTIAL
+  CANCELLED
+}
+
+model User {
+  id                    Int       @id @default(autoincrement())
+  name                  String    @db.VarChar(50)
+  email                 String    @unique @db.VarChar(100)
+  password              String
+  availableBalance      Decimal   @default(0.00) @map("available_balance") @db.Decimal(15, 2)
+  reservedBalance       Decimal   @default(0.00) @map("reserved_balance") @db.Decimal(15, 2)
+  refreshToken          String?   @map("refresh_token") @db.VarChar(100)
+  refreshTokenExpiresAt DateTime? @map("refresh_token_expires_at")
+  createdAt             DateTime  @default(now()) @map("created_at")
+
+  orders   Order[]
+  holdings PortfolioHolding[]
+
+  @@map("users")
+}
+
+model Stock {
+  id        Int      @id @default(autoincrement())
+  symbol    String   @unique @db.VarChar(50)
+  name      String   @db.VarChar(100)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  orders   Order[]
+  holdings PortfolioHolding[]
+  candles  Candle[]
+
+  @@map("stocks")
+}
+
+model PortfolioHolding {
+  id               Int      @id @default(autoincrement())
+  stockId          Int      @map("stock_id")
+  userId           Int      @map("user_id")
+  quantity         Int
+  reservedQuantity Int      @default(0) @map("reserved_quantity")
+  price            Decimal  @db.Decimal(15, 2)
+  purchasedAt      DateTime @default(now()) @map("purchased_at")
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  stock Stock @relation(fields: [stockId], references: [id], onDelete: Cascade)
+
+  @@map("portfolio_holdings")
+}
+
+model Order {
+  id             Int            @id @default(autoincrement())
+  userId         Int            @map("user_id")
+  stockId        Int            @map("stock_id")
+  side           SIDE_TYPE
+  execution      EXECUTION_TYPE
+  reservedAmount Decimal?       @default(0) @map("reserved_amount") @db.Decimal(15, 2)
+  isIoc          Boolean        @default(false) @map("is_ioc")
+  price          Decimal        @db.Decimal(15, 2)
+  quantity       Int
+  filledQuantity Int            @default(0) @map("filled_quantity")
+  status         ORDER_STATUS
+  createdAt      DateTime       @default(now()) @map("created_at")
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  stock Stock @relation(fields: [stockId], references: [id], onDelete: Cascade)
+
+  buyTrades  Trade[] @relation("BuyOrder")
+  sellTrades Trade[] @relation("SellOrder")
+
+  @@map("orders")
+}
+
+model Trade {
+  id          Int      @id @default(autoincrement())
+  buyOrderId  Int      @map("buy_order_id")
+  sellOrderId Int      @map("sell_order_id")
+  quantity    Int
+  price       Decimal  @db.Decimal(15, 2)
+  tradedAt    DateTime @default(now()) @map("traded_at")
+
+  buyOrder  Order @relation("BuyOrder", fields: [buyOrderId], references: [id], onDelete: Cascade)
+  sellOrder Order @relation("SellOrder", fields: [sellOrderId], references: [id], onDelete: Cascade)
+
+  @@map("trades")
+}
+
+model Candle {
+  id        Int      @default(autoincrement())
+  stockId   Int      @map("stock_id")
+  open      Decimal  @db.Decimal(10, 2)
+  high      Decimal  @db.Decimal(10, 2)
+  low       Decimal  @db.Decimal(10, 2)
+  close     Decimal  @db.Decimal(10, 2)
+  volume    Int      @default(0)
+  timestamp DateTime
+
+  stock Stock @relation(fields: [stockId], references: [id], onDelete: Cascade)
+
+  @@id([id, timestamp])
+  @@unique([stockId, timestamp])
+  @@map("candles")
+}
