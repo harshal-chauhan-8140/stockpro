@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="https://raw.githubusercontent.com/harshal-chauhan-8140/stockpro/master/frontend/stockpro/public/assets/logo.png" alt="StockPro Logo" width="200" />
+</p>
+
 # StockPro - Full Stack Trading Platform
 
 StockPro is a full-stack trading platform that allows users to register, log in, make trades, view portfolios, and see real-time market data. The application consists of a **React-based frontend** and a **Node.js microservices backend** that includes REST APIs, Redis streams, and WebSocket communication.
