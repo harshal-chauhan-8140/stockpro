@@ -17,7 +17,12 @@ The project is divided into a frontend and three backend services:
 
 #### ▶️ How to Run the Frontend
 
-cd frontend/stock-pronpm installnpm run dev
+  ```
+cd frontend/stock-pro
+npm install
+npm run dev
+  ```
+
 ### 📦 Backend - Node.js Microservices
 
 The backend consists of three Node.js services:
@@ -55,7 +60,17 @@ Each service has its own directory and needs to be set up and run individually.
 
 To run the `user-service`:
 
-cd backend/user-servicenpm installnpm run setup:db:envnpm run prisma:migrate  # If running for the first timenpm run prisma:deploy   # If running in productionnpm run prisma:generatenpm run seed          # For the first timenpm run start
+```
+cd backend/user-service
+npm install
+npm run setup:db:env
+npm run prisma:migrate  # If running for the first time
+npm run prisma:deploy   # If running in production
+npm run prisma:generate
+npm run seed          # For the first time
+npm run start
+```
+
 **Important Notes for User Service:**
 
 * You must set up the `.env` file based on the provided `.env.example`. This file contains environment-specific variables like database URLs, API keys, and port numbers.
@@ -67,14 +82,30 @@ cd backend/user-servicenpm installnpm run setup:db:envnpm run prisma:migrate  # 
 
 To run the `order-matching-engine`:
 
-cd backend/order-matching-enginenpm installnpm run setup:db:envnpm run prisma:generatenpm run buildnpm run start
+```
+cd backend/order-matching-engine
+npm install
+npm run setup:db:env
+npm run prisma:generate
+npm run build
+npm run start
+```
+
 * Make sure to configure your `.env` file based on `.env.example`.
 
 **3. Realtime Gateway**
 
 To run the `realtime-gateway`:
 
-cd backend/realtime-gatewaynpm installnpm run setup:db:envnpm run prisma:generatenpm run buildnpm run start
+```
+cd backend/realtime-gateway
+npm install
+npm run setup:db:env
+npm run prisma:generate
+npm run build
+npm run start
+```
+
 * Make sure to configure your `.env` file based on `.env.example`.
 
 #### ▶️ Running with Docker Compose (Optional - for local development)
