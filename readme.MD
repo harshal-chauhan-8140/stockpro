@@ -4,6 +4,8 @@
 
 # StockPro - Full Stack Trading Platform
 
+**Preview:** https://stockpro.harshal-dev.space 
+
 StockPro is a full-stack trading platform that allows users to register, log in, make trades, view portfolios, and see real-time market data. The application consists of a **React-based frontend** and a **Node.js microservices backend** that includes REST APIs, Redis streams, and WebSocket communication.
 
 ## 🔧 Project Structure
